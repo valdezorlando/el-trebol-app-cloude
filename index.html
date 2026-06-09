@@ -1,0 +1,1211 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#d42b2b">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="El Trébol">
+<title>El Trébol</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --rojo:#d42b2b;--rojo-dark:#a01f1f;--rojo-light:#ff4444;
+  --bg:#111;--surface:#1c1c1c;--surface2:#252525;--border:#333;
+  --text:#f0f0f0;--muted:#888;--green:#2ecc71;--green2:#00ff88;
+  --amber:#f39c12;--blue:#3498db;--purple:#9b59b6;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;max-width:430px;margin:0 auto;padding-bottom:70px;}
+
+/* HEADER */
+.header{background:var(--rojo);padding:14px 18px 12px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;}
+.hl{font-family:'Bebas Neue',sans-serif;font-size:24px;letter-spacing:1px;line-height:1;}
+.hl span{font-size:11px;display:block;letter-spacing:2px;opacity:.8;font-family:'DM Sans',sans-serif;font-weight:300;}
+.hd{font-size:12px;opacity:.9;text-align:right;font-weight:500;}
+
+/* BOTTOM NAV */
+.nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:430px;background:#181818;border-top:1px solid var(--border);display:grid;grid-template-columns:repeat(5,1fr);z-index:100;}
+.nav-item{padding:10px 4px 8px;text-align:center;font-size:9px;font-weight:600;color:var(--muted);cursor:pointer;letter-spacing:.5px;text-transform:uppercase;transition:color .2s;}
+.nav-item .ni{font-size:20px;display:block;margin-bottom:2px;}
+.nav-item.active{color:var(--rojo-light);}
+
+/* SCREENS */
+.screen{display:none;padding:14px;}
+.screen.active{display:block;}
+
+/* CARDS */
+.card{background:var(--surface);border-radius:12px;padding:14px;border:1px solid var(--border);}
+.card-label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;}
+.card-value{font-family:'Bebas Neue',sans-serif;font-size:26px;letter-spacing:.5px;line-height:1;}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:12px;}
+.span2{grid-column:span 2;}
+
+/* FINANCE BOX */
+.fin-box{background:#0d1f0d;border:1px solid #2a4a2a;border-radius:14px;padding:14px;margin-bottom:14px;}
+.fin-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px dashed #1e3a1e;}
+.fin-row:last-child{border-bottom:none;padding-bottom:2px;}
+.fin-label{font-size:13px;color:#aaa;}
+.fin-sub{font-size:10px;color:#555;}
+.fin-val{font-family:'Bebas Neue',sans-serif;font-size:22px;}
+.fin-val.green{color:var(--green);}
+.fin-val.red{color:var(--rojo-light);}
+.fin-val.amber{color:var(--amber);}
+.fin-val.big{font-size:30px;color:var(--green2);}
+
+/* PROGRESS */
+.prog-wrap{background:var(--surface);border-radius:12px;padding:14px;border:1px solid var(--border);margin-bottom:12px;}
+.prog-header{display:flex;justify-content:space-between;margin-bottom:8px;}
+.prog-title{font-size:13px;font-weight:600;}
+.prog-pct{font-family:'Bebas Neue',sans-serif;font-size:18px;color:var(--amber);}
+.prog-bar{height:10px;background:#2a2a2a;border-radius:20px;overflow:hidden;}
+.prog-fill{height:100%;border-radius:20px;transition:width .5s ease;background:linear-gradient(90deg,var(--rojo),var(--amber));}
+.prog-fill.done{background:linear-gradient(90deg,var(--green),var(--green2));}
+.prog-info{display:flex;justify-content:space-between;margin-top:6px;font-size:11px;color:var(--muted);}
+
+/* AUTO CUOTA */
+.cuota-box{background:#1a1200;border:1px solid #3a2800;border-radius:14px;padding:14px;margin-bottom:14px;}
+.cuota-title{font-family:'Bebas Neue',sans-serif;font-size:16px;color:var(--amber);letter-spacing:1px;margin-bottom:10px;}
+.cuota-row{display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px dashed #2a2000;}
+.cuota-row:last-child{border-bottom:none;}
+
+/* SECTION TITLE */
+.stitle{font-family:'Bebas Neue',sans-serif;font-size:19px;letter-spacing:1px;color:var(--rojo-light);margin-bottom:10px;display:flex;align-items:center;gap:8px;}
+.stitle::after{content:'';flex:1;height:1px;background:var(--border);}
+
+/* FORM */
+.fg{margin-bottom:11px;}
+.fl{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:4px;display:block;}
+.fi{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:16px;padding:10px 12px;outline:none;transition:border-color .2s;}
+.fi:focus{border-color:var(--rojo);}
+.fi::placeholder{color:#555;}
+.fi.auto{border-color:#2a4a2a;background:#1a2a1a;color:var(--green);font-weight:600;}
+.fi[readonly]{opacity:.85;}
+.fr2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.hint{font-size:10px;color:var(--blue);margin-top:3px;}
+
+/* TIMER */
+.timer-row{display:flex;align-items:center;gap:8px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:9px 12px;}
+.timer-disp{font-family:'Bebas Neue',sans-serif;font-size:24px;letter-spacing:2px;color:var(--amber);min-width:85px;}
+.tbtn{padding:6px 11px;border-radius:6px;border:none;font-family:'DM Sans',sans-serif;font-size:11px;font-weight:700;cursor:pointer;}
+.tbtn.go{background:var(--green);color:#000;}
+.tbtn.stop{background:var(--rojo);color:#fff;}
+.tbtn.rst{background:var(--surface);color:var(--muted);border:1px solid var(--border);}
+
+/* BUTTONS */
+.btn{width:100%;background:var(--rojo);color:#fff;border:none;border-radius:10px;padding:14px;font-family:'Bebas Neue',sans-serif;font-size:19px;letter-spacing:1.5px;cursor:pointer;transition:background .15s;margin-top:6px;}
+.btn:active{background:var(--rojo-dark);}
+.btn.sec{background:var(--surface2);color:var(--text);border:1px solid var(--border);font-size:14px;font-family:'DM Sans',sans-serif;font-weight:600;padding:10px;}
+.btn.sm{width:auto;padding:7px 14px;font-size:13px;border-radius:7px;margin-top:0;}
+.btn.green{background:#1a5c2a;}
+.btn.del{background:transparent;border:1px solid var(--rojo-dark);color:var(--rojo-light);font-size:12px;font-family:'DM Sans',sans-serif;padding:5px 12px;border-radius:6px;width:auto;margin-top:0;}
+
+/* TOTAL PREVIEW */
+.tot-prev{background:#0a1a0a;border:1px solid #2a4a2a;border-radius:12px;padding:14px;margin:12px 0;}
+.tot-break{font-size:12px;color:#888;margin-bottom:6px;}
+.tot-break span{color:var(--green);font-weight:600;}
+.tot-big{font-family:'Bebas Neue',sans-serif;font-size:34px;color:var(--green);letter-spacing:1px;}
+
+/* VIAJE CARD */
+.vc{background:var(--surface);border-radius:12px;border:1px solid var(--border);margin-bottom:10px;overflow:hidden;}
+.vc-head{display:flex;justify-content:space-between;align-items:flex-start;padding:12px 14px;cursor:pointer;}
+.vc-num{font-family:'Bebas Neue',sans-serif;font-size:12px;color:var(--rojo-light);letter-spacing:1px;}
+.vc-cli{font-weight:600;font-size:15px;margin-top:1px;}
+.vc-dir{font-size:11px;color:var(--muted);margin-top:2px;}
+.vc-tot{font-family:'Bebas Neue',sans-serif;font-size:21px;color:var(--green);text-align:right;}
+.vc-time{font-size:10px;color:var(--muted);text-align:right;margin-top:2px;}
+.vc-det{display:none;padding:0 14px 12px;border-top:1px solid var(--border);}
+.vc-det.open{display:block;}
+.dr{display:flex;justify-content:space-between;padding:5px 0;font-size:12px;border-bottom:1px dashed #2a2a2a;}
+.dr:last-child{border-bottom:none;}
+.dl{color:var(--muted);}
+.dv{font-weight:600;}
+.vc-acts{display:flex;justify-content:flex-end;gap:8px;margin-top:8px;}
+
+/* CLIENTES */
+.cli-item{background:var(--surface);border-radius:10px;border:1px solid var(--border);padding:12px 14px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;cursor:pointer;}
+.cli-name{font-weight:600;font-size:15px;}
+.cli-dir{font-size:12px;color:var(--muted);margin-top:2px;}
+.cli-viajes{font-size:11px;color:var(--amber);}
+.cli-right{text-align:right;}
+.cli-item:active{background:var(--surface2);}
+
+/* HISTORIAL */
+.day-block{margin-bottom:18px;}
+.day-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;padding-bottom:6px;border-bottom:2px solid var(--rojo);}
+.day-lbl{font-family:'Bebas Neue',sans-serif;font-size:17px;letter-spacing:1px;}
+.day-tot{font-family:'Bebas Neue',sans-serif;font-size:19px;color:var(--green);}
+
+/* CONFIG */
+.cfg-card{background:var(--surface);border-radius:12px;border:1px solid var(--border);padding:14px;margin-bottom:12px;}
+.cfg-title{font-family:'Bebas Neue',sans-serif;font-size:17px;color:var(--amber);letter-spacing:1px;margin-bottom:10px;}
+.cfg-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--border);}
+.cfg-row:last-child{border-bottom:none;}
+.cfg-lbl{font-size:13px;}
+.cfg-sub{font-size:10px;color:var(--muted);}
+.cfg-in{background:var(--surface2);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:15px;padding:6px 10px;width:110px;text-align:right;outline:none;font-family:'DM Sans',sans-serif;}
+.cfg-in:focus{border-color:var(--amber);}
+
+/* BADGE */
+.badge{background:#1a3a1a;color:var(--green);font-size:9px;font-weight:700;padding:2px 6px;border-radius:8px;letter-spacing:.5px;margin-left:5px;}
+
+/* SEMANA */
+.sem-box{background:#10101a;border:1px solid #2a2a4a;border-radius:14px;padding:14px;margin-bottom:14px;}
+.sem-title{font-family:'Bebas Neue',sans-serif;font-size:15px;color:var(--blue);letter-spacing:1px;margin-bottom:10px;}
+.sem-row{display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px dashed #1e1e3a;}
+.sem-row:last-child{border-bottom:none;}
+.sem-lbl{font-size:12px;color:#aaa;}
+.sem-val{font-family:'Bebas Neue',sans-serif;font-size:19px;}
+
+/* TOAST */
+.toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--green);color:#000;padding:10px 20px;border-radius:20px;font-weight:600;font-size:13px;transition:transform .3s;z-index:999;white-space:nowrap;}
+.toast.show{transform:translateX(-50%) translateY(0);}
+
+/* MODAL */
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:200;align-items:flex-end;justify-content:center;}
+.modal-bg.open{display:flex;}
+.modal{background:#1e1e1e;border-radius:18px 18px 0 0;padding:20px;width:100%;max-width:430px;max-height:80vh;overflow-y:auto;}
+.modal-title{font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--rojo-light);letter-spacing:1px;margin-bottom:14px;}
+.modal-close{float:right;background:none;border:none;color:var(--muted);font-size:20px;cursor:pointer;margin-top:-4px;}
+
+.empty{text-align:center;padding:36px 20px;color:var(--muted);font-size:13px;}
+.empty-icon{font-size:36px;margin-bottom:8px;}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="hl">🍀 El Trébol<span>Registro de Viajes</span></div>
+  <div class="hd" id="headerDate"></div>
+</div>
+
+<!-- ===== SCREENS ===== -->
+
+<!-- NUEVO VIAJE -->
+<div class="screen active" id="screen-nuevo">
+
+  <div class="stitle">Cliente</div>
+
+  <!-- Clientes frecuentes -->
+  <div class="fg">
+    <label class="fl">Nombre / Empresa</label>
+    <div style="display:flex;gap:8px;">
+      <input class="fi" id="f-cliente" type="text" placeholder="Ej: Droguería Express" style="flex:1">
+      <button class="btn sec sm" onclick="openCliModal()" style="white-space:nowrap">⭐ Freq.</button>
+    </div>
+  </div>
+  <div class="fg">
+    <label class="fl">Dirección destino</label>
+    <div style="display:flex;gap:8px;">
+      <input class="fi" id="f-direccion" type="text" placeholder="Ej: Mitre 450, C.A.B.A." style="flex:1">
+      <button class="tbtn rst" onclick="abrirNav(document.getElementById('f-direccion').value)" title="Navegar" style="font-size:18px;padding:8px 12px;">🗺️</button>
+    </div>
+  </div>
+
+  <div class="stitle">Recorrido</div>
+  <div class="fr2">
+    <div class="fg"><label class="fl">Hora inicio</label><input class="fi" id="f-hi" type="time"></div>
+    <div class="fg"><label class="fl">Hora fin</label><input class="fi" id="f-hf" type="time"></div>
+  </div>
+  <div class="fg">
+    <label class="fl">Kilómetros recorridos</label>
+    <input class="fi" id="f-km" type="number" inputmode="decimal" placeholder="Ej: 14.5" step="0.1" oninput="calc()">
+    <div class="hint" id="kmHint"></div>
+  </div>
+
+  <div class="stitle">Forma de cobro</div>
+  <div class="fg">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+      <div id="btn-efectivo" onclick="setCobro('efectivo')"
+        style="background:#1a2a0a;border:2px solid var(--green);border-radius:10px;padding:14px;text-align:center;cursor:pointer;">
+        <div style="font-size:22px;">💵</div>
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:17px;letter-spacing:1px;color:var(--green);">EFECTIVO</div>
+      </div>
+      <div id="btn-cuentacte" onclick="setCobro('cuentacte')"
+        style="background:var(--surface2);border:2px solid var(--border);border-radius:10px;padding:14px;text-align:center;cursor:pointer;">
+        <div style="font-size:22px;">🏦</div>
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:17px;letter-spacing:1px;color:var(--muted);">CTA. CTE.</div>
+      </div>
+    </div>
+    <input type="hidden" id="f-cobro" value="efectivo">
+  </div>
+
+  <div class="stitle">Importes <span class="badge">AUTO</span></div>
+  <div class="fr2">
+    <div class="fg">
+      <label class="fl">💰 Viaje $ <span class="badge">EDITABLE</span></label>
+      <div style="display:flex;gap:6px;">
+        <input class="fi auto" id="f-viaje" type="number" inputmode="numeric" placeholder="0" oninput="calcManual()" style="flex:1">
+        <button class="tbtn rst" onclick="viajeManual=false;calc()" title="Volver a automático" style="white-space:nowrap;font-size:11px;">↺ AUTO</button>
+      </div>
+      <div class="hint" id="viajeHint"></div>
+    </div>
+    <div class="fg"><label class="fl">💤 Espera $ <span class="badge">AUTO</span></label><input class="fi auto" id="f-espera" type="number" readonly></div>
+  </div>
+  <div class="fr2">
+    <div class="fg"><label class="fl">🛣️ Peaje $</label><input class="fi" id="f-peaje" type="number" inputmode="numeric" placeholder="0" oninput="calc()"></div>
+    <div class="fg"><label class="fl">🅿️ Estacionamiento $</label><input class="fi" id="f-estac" type="number" inputmode="numeric" placeholder="0" oninput="calc()"></div>
+  </div>
+  <div class="fr2">
+    <div class="fg"><label class="fl">➕ Otros $</label><input class="fi" id="f-otros" type="number" inputmode="numeric" placeholder="0" oninput="calc()"></div>
+    <div class="fg"><label class="fl">Detalle Otros</label><input class="fi" id="f-otrosDesc" type="text" placeholder="Ej: Propina..."></div>
+  </div>
+
+  <div class="stitle">Espera</div>
+  <div class="fg">
+    <div class="timer-row">
+      <div class="timer-disp" id="timerDisp">00:00:00</div>
+      <button class="tbtn go" id="btnGo" onclick="tStart()">▶ INICIAR</button>
+      <button class="tbtn stop" id="btnStop" onclick="tStop()" style="display:none">⏹ PARAR</button>
+      <button class="tbtn rst" onclick="tReset()">↺</button>
+    </div>
+  </div>
+  <div class="fg">
+    <label class="fl">Minutos espera</label>
+    <input class="fi" id="f-emin" type="number" inputmode="numeric" placeholder="0" oninput="calc()">
+    <div class="hint" id="espHint"></div>
+  </div>
+  <div class="fg"><label class="fl">📝 Notas</label><input class="fi" id="f-notas" type="text" placeholder="Observaciones..."></div>
+
+  <div class="tot-prev">
+    <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;">Total del viaje · <span id="prevCobro" style="color:var(--green);">💵 EFECTIVO</span></div>
+    <div class="tot-break" id="breakdown">—</div>
+    <div class="tot-big" id="prevTot">$ 0</div>
+  </div>
+
+  <button class="btn" onclick="guardar()">GUARDAR VIAJE</button>
+</div>
+
+<!-- HOY -->
+<div class="screen" id="screen-hoy">
+
+  <div class="grid2">
+    <div class="card"><div class="card-label">Viajes hoy</div><div class="card-value" style="color:var(--amber)" id="rViajes">0</div></div>
+    <div class="card"><div class="card-label">KM hoy</div><div class="card-value" style="color:var(--blue)" id="rKm">0 km</div></div>
+  </div>
+
+  <!-- Meta diaria -->
+  <div class="prog-wrap" id="metaBox">
+    <div class="prog-header">
+      <div class="prog-title">🎯 Meta diaria</div>
+      <div class="prog-pct" id="metaPct">0%</div>
+    </div>
+    <div class="prog-bar"><div class="prog-fill" id="metaFill" style="width:0%"></div></div>
+    <div class="prog-info">
+      <span id="metaActual">$ 0 recaudado</span>
+      <span id="metaGoal">Meta: $ 0</span>
+    </div>
+  </div>
+
+  <!-- Finanzas -->
+  <div class="fin-box">
+    <div style="font-family:'Bebas Neue',sans-serif;font-size:14px;color:var(--muted);letter-spacing:1px;margin-bottom:10px;">RESUMEN DEL DÍA</div>
+    <div class="fin-row">
+      <div><div class="fin-label">💵 Total bruto recaudado</div></div>
+      <div class="fin-val green" id="rBruto">$ 0</div>
+    </div>
+    <div class="fin-row">
+      <div><div class="fin-label">⛽ Nafta del día</div><div class="fin-sub">Registrada hoy</div></div>
+      <div class="fin-val red" id="rNafta">$ 0</div>
+    </div>
+    <div class="fin-row">
+      <div><div class="fin-label">🧾 Gastos fijos del día</div><div class="fin-sub" id="gastosSub"></div></div>
+      <div class="fin-val red" id="rGastos">$ 0</div>
+    </div>
+    <div class="fin-row">
+      <div><div class="fin-label">✂️ Comisión <span id="comPctLbl" style="color:var(--amber);font-weight:700;">25%</span></div></div>
+      <div class="fin-val red" id="rComision">$ 0</div>
+    </div>
+    <div class="fin-row" style="border-bottom:2px solid #2a4a2a;">
+      <div><div class="fin-label" style="font-weight:700;color:#fff;">🟢 Neto del día</div><div class="fin-sub">Bruto − nafta − gastos − comisión</div></div>
+      <div class="fin-val big" id="rNeto">$ 0</div>
+    </div>
+    <!-- DESCUENTOS FIJOS DIARIOS -->
+    <div style="font-family:'Bebas Neue',sans-serif;font-size:12px;color:var(--muted);letter-spacing:1px;margin:10px 0 6px;">COMPROMISOS DEL DÍA</div>
+    <div class="fin-row">
+      <div><div class="fin-label">🚗 Auto (cuota sem. ÷ días)</div><div class="fin-sub" id="autoDiaSub">$ 420.000 ÷ 6 días</div></div>
+      <div class="fin-val amber" id="rAutoDia">$ 0</div>
+    </div>
+    <div class="fin-row">
+      <div><div class="fin-label">🏠 Alquiler (÷ días hábiles)</div><div class="fin-sub" id="alqDiaSub">$ 300.000 ÷ 20 días</div></div>
+      <div class="fin-val amber" id="rAlqDia">$ 0</div>
+    </div>
+    <div class="fin-row" style="border-top:2px solid #3a1a00;margin-top:4px;padding-top:10px;">
+      <div><div class="fin-label" style="font-weight:700;color:#fff;font-size:15px;">💚 Para vos hoy</div><div class="fin-sub">Neto − auto día − alquiler día</div></div>
+      <div class="fin-val" style="font-size:32px;color:#00ff88;" id="rParaMi">$ 0</div>
+    </div>
+  </div>
+
+  <!-- CAJA: EFECTIVO / CUENTA CORRIENTE -->
+  <div style="background:#0a0a1a;border:1px solid #2a2a5a;border-radius:14px;padding:14px;margin-bottom:14px;">
+    <div style="font-family:'Bebas Neue',sans-serif;font-size:14px;color:#6a8aff;letter-spacing:1px;margin-bottom:10px;">💼 CAJA DEL DÍA</div>
+    <div class="fin-row">
+      <div><div class="fin-label">💵 Efectivo cobrado</div><div class="fin-sub" id="subEfectivo">0 viajes</div></div>
+      <div class="fin-val" style="color:var(--green);" id="rEfectivo">$ 0</div>
+    </div>
+    <div class="fin-row">
+      <div><div class="fin-label">🏦 Cuenta corriente</div><div class="fin-sub" id="subCC">0 viajes</div></div>
+      <div class="fin-val" style="color:var(--blue);" id="rCC">$ 0</div>
+    </div>
+    <div class="fin-row">
+      <div><div class="fin-label">✂️ Comisión efectivo (proporcional)</div></div>
+      <div class="fin-val red" id="rComEfectivo">$ 0</div>
+    </div>
+    <div class="fin-row">
+      <div><div class="fin-label">✂️ Comisión CC (proporcional)</div></div>
+      <div class="fin-val red" id="rComCC">$ 0</div>
+    </div>
+    <div class="fin-row" style="border-top:2px solid #2a2a5a;margin-top:4px;padding-top:10px;">
+      <div><div class="fin-label" style="color:#fff;font-weight:700;">💵 En mano al cerrar</div><div class="fin-sub">Efectivo − su comisión</div></div>
+      <div class="fin-val" style="font-size:26px;color:var(--green);" id="rEnMano">$ 0</div>
+    </div>
+    <div class="fin-row">
+      <div><div class="fin-label" style="color:#fff;font-weight:700;">🏦 A cobrar por CC</div><div class="fin-sub">CC − su comisión</div></div>
+      <div class="fin-val" style="font-size:26px;color:var(--blue);" id="rACobrar">$ 0</div>
+    </div>
+  </div>
+
+  <!-- Auto cuota -->
+  <div class="cuota-box" id="cuotaBox">
+    <div class="cuota-title">🚗 Cuota semanal del auto</div>
+    <div class="cuota-row"><span style="font-size:13px;color:#aaa;">Cuota semanal</span><span style="font-family:'Bebas Neue',sans-serif;font-size:18px;color:var(--amber);" id="cuotaVal">$ 420.000</span></div>
+    <div class="cuota-row"><span style="font-size:13px;color:#aaa;">Neto acumulado semana</span><span style="font-family:'Bebas Neue',sans-serif;font-size:18px;color:var(--green);" id="cuotaAcum">$ 0</span></div>
+    <div style="margin-top:10px;">
+      <div class="prog-bar"><div class="prog-fill" id="cuotaFill" style="width:0%"></div></div>
+      <div class="prog-info"><span id="cuotaFalta">Faltan $ 0</span><span id="cuotaPct2">0%</span></div>
+    </div>
+  </div>
+
+  <!-- Nafta rápida -->
+  <div class="stitle">⛽ Registrar nafta hoy</div>
+  <div class="fr2" style="margin-bottom:12px;">
+    <div class="fg" style="margin:0"><label class="fl">Monto gastado $</label><input class="fi" id="f-nafta" type="number" inputmode="numeric" placeholder="0"></div>
+    <div style="display:flex;align-items:flex-end;"><button class="btn green sm" onclick="guardarNafta()" style="width:100%;margin-bottom:0">+ NAFTA</button></div>
+  </div>
+
+  <div class="stitle">Viajes de hoy</div>
+  <div id="listHoy"></div>
+</div>
+
+<!-- CLIENTES -->
+<div class="screen" id="screen-clientes">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
+    <div class="stitle" style="margin:0">⭐ Frecuentes</div>
+    <button class="btn sec sm" onclick="openNuevoCli()">+ Nuevo</button>
+  </div>
+  <div id="listClientes"></div>
+</div>
+
+<!-- HISTORIAL / SEMANA -->
+<div class="screen" id="screen-historial">
+  <div class="fr2" style="margin-bottom:14px;">
+    <button class="btn sec" id="tabSem" onclick="subTab('semana')" style="border-color:var(--blue);color:var(--blue);">📅 Esta semana</button>
+    <button class="btn sec" id="tabHist" onclick="subTab('historial')">📋 Todo</button>
+  </div>
+
+  <!-- Semana -->
+  <div id="vistasSemana">
+    <div class="sem-box">
+      <div class="sem-title">RESUMEN SEMANAL</div>
+      <div class="sem-row"><div class="sem-lbl">🗓️ Semana</div><div class="sem-val" style="color:var(--blue);font-size:14px;" id="semRango">—</div></div>
+      <div class="sem-row"><div class="sem-lbl">🚗 Total viajes</div><div class="sem-val" style="color:var(--amber);" id="semViajes">0</div></div>
+      <div class="sem-row"><div class="sem-lbl">📍 KM recorridos</div><div class="sem-val" style="color:var(--text);" id="semKm">0 km</div></div>
+      <div class="sem-row"><div class="sem-lbl">💵 Bruto total</div><div class="sem-val green" id="semBruto">$ 0</div></div>
+      <div class="sem-row"><div class="sem-lbl">⛽ Nafta semana</div><div class="sem-val" style="color:var(--rojo-light);" id="semNafta">$ 0</div></div>
+      <div class="sem-row"><div class="sem-lbl">🧾 Gastos fijos sem.</div><div class="sem-val" style="color:var(--rojo-light);" id="semGastos">$ 0</div></div>
+      <div class="sem-row"><div class="sem-lbl">✂️ Comisión sem.</div><div class="sem-val" style="color:var(--rojo-light);" id="semComision">$ 0</div></div>
+      <div class="sem-row"><div class="sem-lbl">🚗 Cuota auto</div><div class="sem-val" style="color:var(--amber);" id="semCuota">$ 0</div></div>
+      <div class="sem-row"><div class="sem-lbl">🏠 Alquiler (proporcional)</div><div class="sem-val" style="color:var(--amber);" id="semAlq">$ 0</div></div>
+      <div class="sem-row"><div class="sem-lbl" style="font-weight:700;color:#fff;">💚 Para vos esta semana</div><div class="sem-val big" style="font-size:26px;color:var(--green2);" id="semNeto">$ 0</div></div>
+      <div style="height:1px;background:var(--border);margin:8px 0;"></div>
+      <div style="font-family:'Bebas Neue',sans-serif;font-size:12px;color:#6a8aff;letter-spacing:1px;margin:6px 0 4px;">CAJA SEMANAL</div>
+      <div class="sem-row"><div class="sem-lbl">💵 Efectivo neto (sin comisión)</div><div class="sem-val" style="color:var(--green);" id="semEnMano">$ 0</div></div>
+      <div class="sem-row"><div class="sem-lbl">🏦 CC neto (a cobrar)</div><div class="sem-val" style="color:var(--blue);" id="semACobrar">$ 0</div></div>
+    </div>
+    <div class="stitle">Días de la semana</div>
+    <div id="semDias"></div>
+  </div>
+
+  <div id="vistaHistorial" style="display:none;">
+    <div style="display:flex;justify-content:flex-end;margin-bottom:12px;">
+      <button class="btn sec sm" onclick="limpiarHist()">🗑 Borrar todo</button>
+    </div>
+    <div id="listHistorial"></div>
+  </div>
+</div>
+
+<!-- CONFIG -->
+<div class="screen" id="screen-config">
+  <div class="cfg-card">
+    <div class="cfg-title">💰 Tarifas</div>
+    <div class="cfg-row"><div><div class="cfg-lbl">$ por kilómetro</div><div class="cfg-sub">Viaje = km × tarifa</div></div><input class="cfg-in" id="cfg-km" type="number" value="1500" onchange="saveCfg()"></div>
+    <div class="cfg-row"><div><div class="cfg-lbl">$ por minuto espera</div><div class="cfg-sub">Espera = min × tarifa</div></div><input class="cfg-in" id="cfg-esp" type="number" value="250" onchange="saveCfg()"></div>
+    <div class="cfg-row"><div><div class="cfg-lbl">% Comisión empresa</div><div class="cfg-sub">Se descuenta del bruto</div></div><input class="cfg-in" id="cfg-com" type="number" value="25" onchange="saveCfg()"></div>
+    <div class="cfg-row"><div><div class="cfg-lbl">Peaje predeterminado $</div></div><input class="cfg-in" id="cfg-peaje" type="number" value="0" onchange="saveCfg()"></div>
+  </div>
+
+  <div class="cfg-card">
+    <div class="cfg-title">🎯 Meta y Compromisos</div>
+    <div class="cfg-row"><div><div class="cfg-lbl">Meta diaria bruta $</div><div class="cfg-sub">Objetivo de recaudación por día</div></div><input class="cfg-in" id="cfg-meta" type="number" value="150000" onchange="saveCfg()"></div>
+    <div class="cfg-row"><div><div class="cfg-lbl">Cuota semanal auto $</div><div class="cfg-sub">Pago miércoles → martes</div></div><input class="cfg-in" id="cfg-cuota" type="number" value="420000" onchange="saveCfg()"></div>
+    <div class="cfg-row"><div><div class="cfg-lbl">Días que trabajás por semana</div><div class="cfg-sub">Para dividir cuota del auto</div></div><input class="cfg-in" id="cfg-diasSem" type="number" value="6" onchange="saveCfg()"></div>
+    <div class="cfg-row"><div><div class="cfg-lbl">Alquiler mensual $</div><div class="cfg-sub">Se divide por días hábiles</div></div><input class="cfg-in" id="cfg-alquiler" type="number" value="300000" onchange="saveCfg()"></div>
+    <div class="cfg-row"><div><div class="cfg-lbl">Días hábiles del mes</div><div class="cfg-sub">20 = 4 sem · 22 = 4,4 sem aprox</div></div><input class="cfg-in" id="cfg-diasMes" type="number" value="20" onchange="saveCfg()"></div>
+  </div>
+
+  <div class="cfg-card">
+    <div class="cfg-title">🧾 Gastos fijos del día</div>
+    <div class="cfg-sub" style="margin-bottom:10px;color:var(--muted);font-size:12px;">Gastos que se descuentan automáticamente cada día (seguro, celular, etc.)</div>
+    <div id="gastosList"></div>
+    <div class="fr2" style="margin-top:10px;gap:8px;">
+      <input class="fi" id="cfg-gastoNombre" type="text" placeholder="Nombre gasto" style="font-size:14px;">
+      <input class="fi" id="cfg-gastoMonto" type="number" inputmode="numeric" placeholder="$ monto" style="font-size:14px;">
+    </div>
+    <button class="btn green sm" onclick="agregarGasto()" style="margin-top:8px;width:100%;">+ AGREGAR GASTO</button>
+  </div>
+
+  <button class="btn" onclick="saveCfg();toast('✅ Configuración guardada')">GUARDAR CONFIGURACIÓN</button>
+</div>
+
+<!-- BOTTOM NAV -->
+<nav class="nav">
+  <div class="nav-item active" onclick="goTo('nuevo',this)"><span class="ni">➕</span>Nuevo</div>
+  <div class="nav-item" onclick="goTo('hoy',this)"><span class="ni">📋</span>Hoy</div>
+  <div class="nav-item" onclick="goTo('clientes',this)"><span class="ni">⭐</span>Clientes</div>
+  <div class="nav-item" onclick="goTo('historial',this)"><span class="ni">📅</span>Semana</div>
+  <div class="nav-item" onclick="goTo('config',this)"><span class="ni">⚙️</span>Config</div>
+</nav>
+
+<!-- MODAL CLIENTES FRECUENTES (seleccionar) -->
+<div class="modal-bg" id="modalCli">
+  <div class="modal">
+    <div class="modal-title">⭐ Clientes frecuentes <button class="modal-close" onclick="closeModal('modalCli')">✕</button></div>
+    <div id="modalCliList"></div>
+  </div>
+</div>
+
+<!-- MODAL NUEVO CLIENTE -->
+<div class="modal-bg" id="modalNuevoCli">
+  <div class="modal">
+    <div class="modal-title">➕ Nuevo cliente <button class="modal-close" onclick="closeModal('modalNuevoCli')">✕</button></div>
+    <div class="fg"><label class="fl">Nombre / Empresa</label><input class="fi" id="nc-nombre" type="text" placeholder="Ej: Droguería Express"></div>
+    <div class="fg"><label class="fl">Dirección habitual</label><input class="fi" id="nc-dir" type="text" placeholder="Ej: Mitre 450, C.A.B.A."></div>
+    <div class="fg"><label class="fl">KM aproximados</label><input class="fi" id="nc-km" type="number" inputmode="decimal" placeholder="Ej: 14.5" step="0.1"></div>
+    <div class="fg"><label class="fl">Notas</label><input class="fi" id="nc-notas" type="text" placeholder="Referencia, horario habitual..."></div>
+    <button class="btn" onclick="guardarCliente()">GUARDAR CLIENTE</button>
+  </div>
+</div>
+
+<!-- MODAL NAVEGACIÓN -->
+<div class="modal-bg" id="modalNav">
+  <div class="modal">
+    <div class="modal-title">🗺️ Navegar a <button class="modal-close" onclick="closeModal('modalNav')">✕</button></div>
+    <div id="navDestLabel" style="font-size:14px;color:var(--muted);margin-bottom:18px;word-break:break-word;"></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+      <button onclick="irAMapa('gmaps')"
+        style="background:#1a2a1a;border:2px solid #34a853;border-radius:12px;padding:18px 10px;cursor:pointer;text-align:center;">
+        <div style="font-size:32px;">🗺️</div>
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:18px;color:#34a853;letter-spacing:1px;margin-top:6px;">GOOGLE MAPS</div>
+      </button>
+      <button onclick="irAMapa('waze')"
+        style="background:#0a1a2a;border:2px solid #00d8ff;border-radius:12px;padding:18px 10px;cursor:pointer;text-align:center;">
+        <div style="font-size:32px;">🚗</div>
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:18px;color:#00d8ff;letter-spacing:1px;margin-top:6px;">WAZE</div>
+      </button>
+    </div>
+    <div style="font-size:11px;color:var(--muted);text-align:center;margin-top:14px;">Desde tu ubicación actual → destino</div>
+  </div>
+</div>
+
+<div class="toast" id="toastEl"></div>
+
+<script>
+// ============================================================
+// KEYS
+// ============================================================
+const K = {
+  cfg:   'trebol_cfg_v2',
+  viajes:'trebol_viajes_v2',
+  nafta: 'trebol_nafta_v1',
+  cli:   'trebol_cli_v1',
+};
+
+// ============================================================
+// CONFIG
+// ============================================================
+function getCfg(){
+  try{ return Object.assign({
+    km:1500, esp:250, com:25, peaje:0,
+    meta:150000, cuota:420000, diasSem:6,
+    alquiler:300000, diasMes:20, gastos:[]
+  }, JSON.parse(localStorage.getItem(K.cfg))||{}); }
+  catch(e){ return {km:1500,esp:250,com:25,peaje:0,meta:150000,cuota:420000,diasSem:6,alquiler:300000,diasMes:20,gastos:[]}; }
+}
+function saveCfg(){
+  const c = {
+    km:      parseFloat(document.getElementById('cfg-km').value)||1500,
+    esp:     parseFloat(document.getElementById('cfg-esp').value)||250,
+    com:     parseFloat(document.getElementById('cfg-com').value)||25,
+    peaje:   parseFloat(document.getElementById('cfg-peaje').value)||0,
+    meta:    parseFloat(document.getElementById('cfg-meta').value)||150000,
+    cuota:   parseFloat(document.getElementById('cfg-cuota').value)||420000,
+    diasSem: parseFloat(document.getElementById('cfg-diasSem').value)||6,
+    alquiler:parseFloat(document.getElementById('cfg-alquiler').value)||300000,
+    diasMes: parseFloat(document.getElementById('cfg-diasMes').value)||20,
+    gastos:  getCfg().gastos,
+  };
+  localStorage.setItem(K.cfg, JSON.stringify(c));
+}
+function loadCfgUI(){
+  const c = getCfg();
+  document.getElementById('cfg-km').value      = c.km;
+  document.getElementById('cfg-esp').value     = c.esp;
+  document.getElementById('cfg-com').value     = c.com;
+  document.getElementById('cfg-peaje').value   = c.peaje;
+  document.getElementById('cfg-meta').value    = c.meta;
+  document.getElementById('cfg-cuota').value   = c.cuota;
+  document.getElementById('cfg-diasSem').value = c.diasSem||6;
+  document.getElementById('cfg-alquiler').value= c.alquiler||300000;
+  document.getElementById('cfg-diasMes').value = c.diasMes||20;
+  renderGastosList();
+}
+
+// Gastos fijos
+function agregarGasto(){
+  const n = document.getElementById('cfg-gastoNombre').value.trim();
+  const m = parseFloat(document.getElementById('cfg-gastoMonto').value)||0;
+  if (!n||!m){ toast('⚠️ Completá nombre y monto','#e67e22'); return; }
+  const c = getCfg();
+  c.gastos.push({id:Date.now(), nombre:n, monto:m});
+  localStorage.setItem(K.cfg, JSON.stringify(c));
+  document.getElementById('cfg-gastoNombre').value='';
+  document.getElementById('cfg-gastoMonto').value='';
+  renderGastosList();
+  toast('✅ Gasto agregado');
+}
+function eliminarGasto(id){
+  const c = getCfg();
+  c.gastos = c.gastos.filter(g=>g.id!==id);
+  localStorage.setItem(K.cfg, JSON.stringify(c));
+  renderGastosList();
+}
+function renderGastosList(){
+  const c = getCfg();
+  const el = document.getElementById('gastosList');
+  if (!c.gastos.length){ el.innerHTML='<div style="font-size:12px;color:var(--muted);padding:6px 0;">Sin gastos fijos cargados.</div>'; return; }
+  el.innerHTML = c.gastos.map(g=>`
+    <div class="cfg-row">
+      <div><div class="cfg-lbl">${g.nombre}</div></div>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <span style="font-family:\'Bebas Neue\',sans-serif;font-size:16px;color:var(--rojo-light);">${fm(g.monto)}</span>
+        <button onclick="eliminarGasto(${g.id})" style="background:none;border:none;color:var(--muted);font-size:16px;cursor:pointer;">✕</button>
+      </div>
+    </div>`).join('');
+}
+
+// ============================================================
+// DATA
+// ============================================================
+function getViajes(){ try{ return JSON.parse(localStorage.getItem(K.viajes))||[]; }catch(e){ return []; } }
+function setViajes(v){ localStorage.setItem(K.viajes, JSON.stringify(v)); }
+function getNafta(){ try{ return JSON.parse(localStorage.getItem(K.nafta))||[]; }catch(e){ return []; } }
+function setNafta(v){ localStorage.setItem(K.nafta, JSON.stringify(v)); }
+function getCli(){ try{ return JSON.parse(localStorage.getItem(K.cli))||[]; }catch(e){ return []; } }
+function setCli(v){ localStorage.setItem(K.cli, JSON.stringify(v)); }
+
+// ============================================================
+// HELPERS
+// ============================================================
+function todayStr(){ return new Date().toISOString().split('T')[0]; }
+function fm(n){ return n?(n<0?'−':'')+'$ '+Math.round(Math.abs(n)).toLocaleString('es-AR'):'$ 0'; }
+function nowT(){
+  const d=new Date();
+  return d.getHours().toString().padStart(2,'0')+':'+d.getMinutes().toString().padStart(2,'0');
+}
+function fdate(s){
+  const [y,m,d]=s.split('-');
+  const days=['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
+  const months=['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+  const dt=new Date(y,m-1,d);
+  return days[dt.getDay()]+' '+d+' '+months[m-1]+' '+y;
+}
+
+// Semana: empieza miércoles
+function getSemanaRange(){
+  const today=new Date();
+  const dow=today.getDay(); // 0=Dom
+  // miércoles=3
+  let diff=dow-3; if(diff<0) diff+=7;
+  const start=new Date(today); start.setDate(today.getDate()-diff);
+  const end=new Date(start); end.setDate(start.getDate()+6);
+  const fmt=d=>d.getDate()+'/'+(d.getMonth()+1);
+  return {
+    start: start.toISOString().split('T')[0],
+    end:   end.toISOString().split('T')[0],
+    label: fmt(start)+' al '+fmt(end),
+  };
+}
+
+function totalGastosDiarios(){
+  return getCfg().gastos.reduce((s,g)=>s+g.monto,0);
+}
+
+// ============================================================
+// INIT
+// ============================================================
+(function init(){
+  const d=new Date();
+  const days=['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
+  const months=['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+  document.getElementById('headerDate').innerHTML=days[d.getDay()]+'<br>'+d.getDate()+' '+months[d.getMonth()];
+  document.getElementById('f-hi').value=nowT();
+  loadCfgUI();
+  calc();
+})();
+
+// ============================================================
+// FORMA DE COBRO
+// ============================================================
+function setCobro(tipo){
+  document.getElementById('f-cobro').value=tipo;
+  const eBtn=document.getElementById('btn-efectivo');
+  const cBtn=document.getElementById('btn-cuentacte');
+  if(tipo==='efectivo'){
+    eBtn.style.background='#1a2a0a'; eBtn.style.borderColor='var(--green)';
+    eBtn.querySelector('div:last-child').style.color='var(--green)';
+    cBtn.style.background='var(--surface2)'; cBtn.style.borderColor='var(--border)';
+    cBtn.querySelector('div:last-child').style.color='var(--muted)';
+    document.getElementById('prevCobro').textContent='💵 EFECTIVO';
+    document.getElementById('prevCobro').style.color='var(--green)';
+  } else {
+    cBtn.style.background='#0a0a2a'; cBtn.style.borderColor='var(--blue)';
+    cBtn.querySelector('div:last-child').style.color='var(--blue)';
+    eBtn.style.background='var(--surface2)'; eBtn.style.borderColor='var(--border)';
+    eBtn.querySelector('div:last-child').style.color='var(--muted)';
+    document.getElementById('prevCobro').textContent='🏦 CUENTA CORRIENTE';
+    document.getElementById('prevCobro').style.color='var(--blue)';
+  }
+}
+
+// ============================================================
+// CÁLCULO AUTOMÁTICO
+// ============================================================
+let viajeManual=false;
+function calc(){
+  const c=getCfg();
+  const km   = parseFloat(document.getElementById('f-km').value)||0;
+  const emin = parseInt(document.getElementById('f-emin').value)||0;
+  const peaje= parseFloat(document.getElementById('f-peaje').value)||0;
+  const estac= parseFloat(document.getElementById('f-estac').value)||0;
+  const otros= parseFloat(document.getElementById('f-otros').value)||0;
+
+  const impVauto = km*c.km;
+  const impE = emin*c.esp;
+
+  // Solo sobreescribir viaje si no fue editado manualmente
+  if(!viajeManual){
+    document.getElementById('f-viaje').value = impVauto||'';
+  }
+  document.getElementById('f-espera').value= impE||'';
+
+  const impV = parseFloat(document.getElementById('f-viaje').value)||0;
+
+  document.getElementById('kmHint').textContent = km>0
+    ? km.toFixed(1)+' km × '+fm(c.km)+'/km = '+fm(impVauto)+(viajeManual?' (editado manualmente)':'')
+    : 'Ingresá km para calcular';
+  document.getElementById('espHint').textContent = emin>0
+    ? emin+' min × '+fm(c.esp)+'/min = '+fm(impE) : '';
+
+  const total=impV+impE+peaje+estac+otros;
+  const parts=[];
+  if(impV)  parts.push('Viaje '+fm(impV));
+  if(impE)  parts.push('Espera '+fm(impE));
+  if(peaje) parts.push('Peaje '+fm(peaje));
+  if(estac) parts.push('Estac. '+fm(estac));
+  if(otros) parts.push('Otros '+fm(otros));
+  document.getElementById('breakdown').innerHTML=
+    parts.length ? parts.map(p=>'<span>'+p+'</span>').join(' + ') : '—';
+  document.getElementById('prevTot').textContent=fm(total);
+}
+function calcManual(){
+  viajeManual=true;
+  calc();
+}
+
+// ============================================================
+// TIMER
+// ============================================================
+let tSec=0,tRun=false,tInt=null;
+function tStart(){
+  if(tRun) return; tRun=true;
+  document.getElementById('btnGo').style.display='none';
+  document.getElementById('btnStop').style.display='';
+  tInt=setInterval(()=>{
+    tSec++;
+    document.getElementById('timerDisp').textContent=s2hms(tSec);
+    document.getElementById('f-emin').value=Math.round(tSec/60);
+    calc();
+  },1000);
+}
+function tStop(){
+  if(!tRun) return; clearInterval(tInt); tRun=false;
+  document.getElementById('btnGo').style.display='';
+  document.getElementById('btnStop').style.display='none';
+  document.getElementById('f-emin').value=Math.round(tSec/60); calc();
+}
+function tReset(){
+  tStop(); tSec=0;
+  document.getElementById('timerDisp').textContent='00:00:00';
+  document.getElementById('f-emin').value=''; calc();
+}
+function s2hms(s){
+  const h=Math.floor(s/3600),m=Math.floor((s%3600)/60),ss=s%60;
+  return [h,m,ss].map(n=>n.toString().padStart(2,'0')).join(':');
+}
+
+// ============================================================
+// GUARDAR VIAJE
+// ============================================================
+function guardar(){
+  const cli=document.getElementById('f-cliente').value.trim();
+  if(!cli){ toast('⚠️ Ingresá el nombre del cliente','#e67e22'); return; }
+  const c=getCfg();
+  const km   = parseFloat(document.getElementById('f-km').value)||0;
+  const emin = parseInt(document.getElementById('f-emin').value)||0;
+  // Leer impV directo del campo (puede ser manual o automático)
+  const impV = parseFloat(document.getElementById('f-viaje').value)||0;
+  const impE = parseFloat(document.getElementById('f-espera').value)||0;
+  const impP = parseFloat(document.getElementById('f-peaje').value)||0;
+  const impS = parseFloat(document.getElementById('f-estac').value)||0;
+  const impO = parseFloat(document.getElementById('f-otros').value)||0;
+  const total= impV+impE+impP+impS+impO;
+
+  if(!total){ toast('⚠️ El total es $0, verificá los importes','#e67e22'); return; }
+
+  const v={
+    id:Date.now(), fecha:todayStr(),
+    hi:document.getElementById('f-hi').value,
+    hf:document.getElementById('f-hf').value,
+    cliente:cli,
+    direccion:document.getElementById('f-direccion').value.trim(),
+    km, emin, impV, impE, impP, impS, impO,
+    otrosDesc:document.getElementById('f-otrosDesc').value.trim(),
+    notas:document.getElementById('f-notas').value.trim(),
+    kmTarifa:c.km, espTarifa:c.esp,
+    cobro: document.getElementById('f-cobro').value || 'efectivo',
+    total,
+  };
+  const vs=getViajes(); vs.push(v); setViajes(vs);
+
+  // actualizar cliente frecuente: +1 viaje
+  const clis=getCli();
+  const idx=clis.findIndex(x=>x.nombre.toLowerCase()===cli.toLowerCase());
+  if(idx>=0){ clis[idx].viajes=(clis[idx].viajes||0)+1; setCli(clis); }
+
+  limpiarForm(); tReset();
+  toast('✅ Viaje guardado!');
+  goTo('hoy', document.querySelectorAll('.nav-item')[1]);
+}
+
+function limpiarForm(){
+  viajeManual=false;
+  ['f-cliente','f-direccion','f-km','f-peaje','f-estac','f-otros','f-otrosDesc','f-emin','f-notas','f-hf']
+    .forEach(id=>document.getElementById(id).value='');
+  document.getElementById('f-hi').value=nowT();
+  document.getElementById('f-viaje').value='';
+  document.getElementById('f-espera').value='';
+  document.getElementById('prevTot').textContent='$ 0';
+  document.getElementById('breakdown').innerHTML='—';
+  document.getElementById('kmHint').textContent='';
+  document.getElementById('espHint').textContent='';
+  setCobro('efectivo');
+}
+
+// ============================================================
+// NAFTA
+// ============================================================
+function guardarNafta(){
+  const m=parseFloat(document.getElementById('f-nafta').value)||0;
+  if(!m){ toast('⚠️ Ingresá el monto','#e67e22'); return; }
+  const ns=getNafta();
+  ns.push({id:Date.now(), fecha:todayStr(), monto:m});
+  setNafta(ns);
+  document.getElementById('f-nafta').value='';
+  toast('⛽ Nafta registrada');
+  renderHoy();
+}
+
+// ============================================================
+// RENDER HOY
+// ============================================================
+function renderHoy(){
+  const hoy=todayStr();
+  const viajes=getViajes().filter(v=>v.fecha===hoy);
+  const naftas=getNafta().filter(n=>n.fecha===hoy);
+  const c=getCfg();
+
+  const bruto=viajes.reduce((s,v)=>s+v.total,0);
+  const naftaTot=naftas.reduce((s,n)=>s+n.monto,0);
+  const gastosDia=totalGastosDiarios();
+  const comision=bruto*c.com/100;
+  const neto=bruto-naftaTot-gastosDia-comision;
+  const km=viajes.reduce((s,v)=>s+v.km,0);
+
+  // Cuota auto por día trabajado
+  const diasSem=c.diasSem||6;
+  const autoDia=Math.round((c.cuota||420000)/diasSem);
+  // Alquiler por día hábil
+  const diasMes=c.diasMes||20;
+  const alqDia=Math.round((c.alquiler||300000)/diasMes);
+  // Para mí
+  const paraMi=neto-autoDia-alqDia;
+
+  document.getElementById('rViajes').textContent=viajes.length;
+  document.getElementById('rKm').textContent=km.toFixed(1)+' km';
+  document.getElementById('rBruto').textContent=fm(bruto);
+  document.getElementById('rNafta').textContent=naftaTot?'− '+fm(naftaTot):'$ 0';
+  document.getElementById('rGastos').textContent=gastosDia?'− '+fm(gastosDia):'$ 0';
+  document.getElementById('rComision').textContent=comision?'− '+fm(comision):'$ 0';
+  document.getElementById('rNeto').textContent=fm(neto);
+  document.getElementById('comPctLbl').textContent=c.com+'%';
+  document.getElementById('gastosSub').textContent=c.gastos.length
+    ? c.gastos.map(g=>g.nombre).join(', ') : 'Sin gastos fijos configurados';
+
+  document.getElementById('rAutoDia').textContent=fm(autoDia);
+  document.getElementById('autoDiaSub').textContent=fm(c.cuota||420000)+' ÷ '+diasSem+' días';
+  document.getElementById('rAlqDia').textContent=fm(alqDia);
+  document.getElementById('alqDiaSub').textContent=fm(c.alquiler||300000)+' ÷ '+diasMes+' días';
+  document.getElementById('rParaMi').textContent=fm(paraMi);
+  document.getElementById('rParaMi').style.color=paraMi>=0?'#00ff88':'var(--rojo-light)';
+
+  // CAJA: efectivo vs cuenta corriente
+  const vEfectivo=viajes.filter(v=>v.cobro==='efectivo'||(v.cobro===undefined));
+  const vCC=viajes.filter(v=>v.cobro==='cuentacte');
+  const totEfectivo=vEfectivo.reduce((s,v)=>s+v.total,0);
+  const totCC=vCC.reduce((s,v)=>s+v.total,0);
+  // comisión proporcional
+  const pctCom=c.com/100;
+  const comEfectivo=Math.round(totEfectivo*pctCom);
+  const comCC=Math.round(totCC*pctCom);
+  const enMano=totEfectivo-comEfectivo;
+  const aCobrar=totCC-comCC;
+
+  document.getElementById('rEfectivo').textContent=fm(totEfectivo);
+  document.getElementById('subEfectivo').textContent=vEfectivo.length+' viaje'+(vEfectivo.length!==1?'s':'');
+  document.getElementById('rCC').textContent=fm(totCC);
+  document.getElementById('subCC').textContent=vCC.length+' viaje'+(vCC.length!==1?'s':'');
+  document.getElementById('rComEfectivo').textContent=comEfectivo?'− '+fm(comEfectivo):'$ 0';
+  document.getElementById('rComCC').textContent=comCC?'− '+fm(comCC):'$ 0';
+  document.getElementById('rEnMano').textContent=fm(enMano);
+  document.getElementById('rACobrar').textContent=fm(aCobrar);
+
+  // Meta
+  const pct=Math.min(100, c.meta>0 ? Math.round(bruto/c.meta*100) : 0);
+  document.getElementById('metaPct').textContent=pct+'%';
+  document.getElementById('metaFill').style.width=pct+'%';
+  document.getElementById('metaFill').className='prog-fill'+(pct>=100?' done':'');
+  document.getElementById('metaActual').textContent=fm(bruto)+' recaudado';
+  document.getElementById('metaGoal').textContent='Meta: '+fm(c.meta);
+
+  // Cuota auto — neto acumulado semana vs cuota
+  const sem=getSemanaRange();
+  const vSem=getViajes().filter(v=>v.fecha>=sem.start&&v.fecha<=sem.end);
+  const nSem=getNafta().filter(n=>n.fecha>=sem.start&&n.fecha<=sem.end);
+  const brutoSem=vSem.reduce((s,v)=>s+v.total,0);
+  const naftaSem=nSem.reduce((s,n)=>s+n.monto,0);
+  const diasConViajes=new Set(vSem.map(v=>v.fecha)).size;
+  const gastosSem=totalGastosDiarios()*diasConViajes;
+  const comSem=brutoSem*c.com/100;
+  const netoSem=brutoSem-naftaSem-gastosSem-comSem;
+  const cuotaPct=Math.min(100,c.cuota>0?Math.round(netoSem/c.cuota*100):0);
+  document.getElementById('cuotaVal').textContent=fm(c.cuota);
+  document.getElementById('cuotaAcum').textContent=fm(netoSem);
+  document.getElementById('cuotaFill').style.width=Math.max(0,cuotaPct)+'%';
+  document.getElementById('cuotaFill').className='prog-fill'+(cuotaPct>=100?' done':'');
+  document.getElementById('cuotaFalta').textContent=netoSem>=c.cuota?'✅ Cuota cubierta':'Faltan '+fm(c.cuota-netoSem);
+  document.getElementById('cuotaPct2').textContent=Math.max(0,cuotaPct)+'%';
+
+  // Lista viajes
+  const list=document.getElementById('listHoy');
+  if(!viajes.length){ list.innerHTML='<div class="empty"><div class="empty-icon">🚗</div>Sin viajes hoy todavía.</div>'; return; }
+  list.innerHTML=viajes.map((v,i)=>buildCard(v,i+1)).join('');
+}
+
+// ============================================================
+// RENDER SEMANA / HISTORIAL
+// ============================================================
+function subTab(t){
+  document.getElementById('vistasSemana').style.display=t==='semana'?'block':'none';
+  document.getElementById('vistaHistorial').style.display=t==='historial'?'block':'none';
+  document.getElementById('tabSem').style.borderColor=t==='semana'?'var(--blue)':'var(--border)';
+  document.getElementById('tabSem').style.color=t==='semana'?'var(--blue)':'var(--text)';
+  document.getElementById('tabHist').style.borderColor=t==='historial'?'var(--rojo-light)':'var(--border)';
+  document.getElementById('tabHist').style.color=t==='historial'?'var(--rojo-light)':'var(--text)';
+  if(t==='semana') renderSemana();
+  if(t==='historial') renderHistorial();
+}
+
+function renderSemana(){
+  const sem=getSemanaRange();
+  const c=getCfg();
+  document.getElementById('semRango').textContent=sem.label;
+
+  const viajes=getViajes().filter(v=>v.fecha>=sem.start&&v.fecha<=sem.end);
+  const naftas=getNafta().filter(n=>n.fecha>=sem.start&&n.fecha<=sem.end);
+
+  const bruto=viajes.reduce((s,v)=>s+v.total,0);
+  const naftaTot=naftas.reduce((s,n)=>s+n.monto,0);
+  const km=viajes.reduce((s,v)=>s+v.km,0);
+  const diasConViajes=new Set(viajes.map(v=>v.fecha)).size;
+  const gastosSem=totalGastosDiarios()*diasConViajes;
+  const comision=bruto*c.com/100;
+  const neto=bruto-naftaTot-gastosSem-comision;
+  // Alquiler proporcional: mensual ÷ diasMes × 7 días de semana
+  const alqSem=Math.round((c.alquiler||300000)/(c.diasMes||20)*7);
+  const paraMiSem=neto-(c.cuota||420000)-alqSem;
+
+  document.getElementById('semViajes').textContent=viajes.length;
+  document.getElementById('semKm').textContent=km.toFixed(1)+' km';
+  document.getElementById('semBruto').textContent=fm(bruto);
+  document.getElementById('semNafta').textContent=fm(naftaTot);
+  document.getElementById('semGastos').textContent=fm(gastosSem);
+  document.getElementById('semComision').textContent=fm(comision);
+  document.getElementById('semCuota').textContent=fm(c.cuota);
+  document.getElementById('semAlq').textContent=fm(alqSem);
+  document.getElementById('semNeto').textContent=fm(paraMiSem);
+  document.getElementById('semNeto').style.color=paraMiSem>=0?'var(--green2)':'var(--rojo-light)';
+
+  // Caja semanal efectivo/CC
+  const vEfSem=viajes.filter(v=>v.cobro==='efectivo'||(v.cobro===undefined));
+  const vCCSem=viajes.filter(v=>v.cobro==='cuentacte');
+  const totEfSem=vEfSem.reduce((s,v)=>s+v.total,0);
+  const totCCSem=vCCSem.reduce((s,v)=>s+v.total,0);
+  const pct=c.com/100;
+  document.getElementById('semEnMano').textContent=fm(Math.round(totEfSem*(1-pct)));
+  document.getElementById('semACobrar').textContent=fm(Math.round(totCCSem*(1-pct)));
+
+  // Días de la semana
+  const byDate={};
+  viajes.forEach(v=>{ if(!byDate[v.fecha])byDate[v.fecha]=[]; byDate[v.fecha].push(v); });
+  const dates=Object.keys(byDate).sort();
+  document.getElementById('semDias').innerHTML = dates.length
+    ? dates.map(d=>{
+        const vs=byDate[d];
+        const t=vs.reduce((s,v)=>s+v.total,0);
+        const k=vs.reduce((s,v)=>s+v.km,0);
+        return `<div class="vc" style="margin-bottom:8px;">
+          <div class="vc-head" style="cursor:default;">
+            <div><div class="vc-num">${fdate(d)}</div><div style="font-size:12px;color:var(--muted);">${vs.length} viaje${vs.length>1?'s':''} · ${k.toFixed(1)} km</div></div>
+            <div class="vc-tot" style="font-size:20px;">${fm(t)}</div>
+          </div>
+        </div>`;
+      }).join('')
+    : '<div class="empty"><div class="empty-icon">📅</div>Sin viajes esta semana.</div>';
+}
+
+function renderHistorial(){
+  const viajes=getViajes();
+  if(!viajes.length){ document.getElementById('listHistorial').innerHTML='<div class="empty"><div class="empty-icon">📋</div>Sin viajes registrados.</div>'; return; }
+  const byDate={};
+  viajes.forEach(v=>{ if(!byDate[v.fecha])byDate[v.fecha]=[]; byDate[v.fecha].push(v); });
+  const dates=Object.keys(byDate).sort((a,b)=>b.localeCompare(a));
+  document.getElementById('listHistorial').innerHTML=dates.map(d=>{
+    const list=byDate[d], tot=list.reduce((s,v)=>s+v.total,0), km=list.reduce((s,v)=>s+v.km,0);
+    return `<div class="day-block">
+      <div class="day-head">
+        <div><div class="day-lbl">${fdate(d)}</div><div style="font-size:11px;color:var(--muted);">${list.length} viaje${list.length>1?'s':''} · ${km.toFixed(1)} km</div></div>
+        <div class="day-tot">${fm(tot)}</div>
+      </div>
+      ${list.map((v,i)=>buildCard(v,i+1)).join('')}
+    </div>`;
+  }).join('');
+}
+
+// ============================================================
+// CARD VIAJE
+// ============================================================
+function buildCard(v,num){
+  const rows=[];
+  if(v.impV) rows.push(['💰 Viaje ('+v.km.toFixed(1)+' km × '+fm(v.kmTarifa||1500)+')', fm(v.impV)]);
+  if(v.impE) rows.push(['💤 Espera ('+v.emin+' min × '+fm(v.espTarifa||250)+')', fm(v.impE)]);
+  if(v.impP) rows.push(['🛣️ Peaje', fm(v.impP)]);
+  if(v.impS) rows.push(['🅿️ Estacionamiento', fm(v.impS)]);
+  if(v.impO) rows.push(['➕ Otros'+(v.otrosDesc?' ('+v.otrosDesc+')':''), fm(v.impO)]);
+  if(v.hi||v.hf) rows.push(['🕐 Horario', (v.hi||'--')+' → '+(v.hf||'--')]);
+  if(v.notas) rows.push(['📝 Notas', v.notas]);
+  const cobroLabel=v.cobro==='cuentacte'
+    ? '<span style="background:#0a0a2a;color:var(--blue);font-size:10px;font-weight:700;padding:2px 8px;border-radius:8px;border:1px solid var(--blue);">🏦 CTA. CTE.</span>'
+    : '<span style="background:#1a2a0a;color:var(--green);font-size:10px;font-weight:700;padding:2px 8px;border-radius:8px;border:1px solid var(--green);">💵 EFECTIVO</span>';
+  return `<div class="vc">
+    <div class="vc-head" onclick="togDet(${v.id})">
+      <div>
+        <div class="vc-num">VIAJE #${num} ${cobroLabel}</div>
+        <div class="vc-cli">${v.cliente}</div>
+        ${v.direccion?`<div class="vc-dir">📍 ${v.direccion}</div>`:''}
+      </div>
+      <div><div class="vc-tot">${fm(v.total)}</div><div class="vc-time">${v.hi||''}</div></div>
+    </div>
+    <div class="vc-det" id="det-${v.id}">
+      ${rows.map(r=>`<div class="dr"><span class="dl">${r[0]}</span><span class="dv">${r[1]}</span></div>`).join('')}
+      <div class="vc-acts">
+        ${v.direccion?`<button class="btn sec sm" onclick="abrirNav('${esc(v.direccion)}')" style="background:#0a1a0a;border-color:#2a4a2a;color:var(--green);">🗺️ Navegar</button>`:''}
+        <button class="btn del" onclick="eliminar(${v.id})">🗑 Eliminar</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+function togDet(id){ document.getElementById('det-'+id).classList.toggle('open'); }
+function eliminar(id){
+  if(!confirm('¿Eliminar este viaje?')) return;
+  setViajes(getViajes().filter(v=>v.id!==id));
+  renderHoy(); renderHistorial(); renderSemana();
+  toast('🗑 Eliminado','#e74c3c');
+}
+function limpiarHist(){
+  if(!confirm('¿Borrar TODOS los viajes?')) return;
+  localStorage.removeItem(K.viajes); localStorage.removeItem(K.nafta);
+  renderHistorial(); toast('Historial borrado','#e74c3c');
+}
+
+// ============================================================
+// CLIENTES FRECUENTES
+// ============================================================
+function renderClientes(){
+  const clis=getCli().sort((a,b)=>(b.viajes||0)-(a.viajes||0));
+  const el=document.getElementById('listClientes');
+  if(!clis.length){ el.innerHTML='<div class="empty"><div class="empty-icon">⭐</div>Sin clientes frecuentes.<br>Agregá uno con el botón +.</div>'; return; }
+  el.innerHTML=clis.map(c=>`
+    <div class="cli-item">
+      <div style="flex:1" onclick="usarCliente('${esc(c.nombre)}','${esc(c.direccion||'')}',${c.km||0})">
+        <div class="cli-name">${c.nombre}</div>
+        ${c.direccion?`<div class="cli-dir">📍 ${c.direccion}</div>`:''}
+        ${c.notas?`<div class="cli-dir">💬 ${c.notas}</div>`:''}
+        <div class="cli-viajes">${c.viajes||0} viaje${(c.viajes||0)!==1?'s':''} · ${c.km?c.km+' km aprox':''}</div>
+      </div>
+      <div class="cli-right" style="display:flex;flex-direction:column;gap:6px;align-items:flex-end;">
+        ${c.direccion?`<button class="btn sec sm" onclick="event.stopPropagation();abrirNav('${esc(c.direccion)}')" style="background:#0a1a0a;border-color:#2a4a2a;color:var(--green);font-size:11px;">🗺️</button>`:''}
+        <button class="btn del" onclick="event.stopPropagation();eliminarCli(${c.id})">✕</button>
+      </div>
+    </div>`).join('');
+}
+
+function esc(s){ return (s||'').replace(/'/g,"\\'"); }
+
+function openNuevoCli(){
+  document.getElementById('nc-nombre').value='';
+  document.getElementById('nc-dir').value='';
+  document.getElementById('nc-km').value='';
+  document.getElementById('nc-notas').value='';
+  openModal('modalNuevoCli');
+}
+
+function guardarCliente(){
+  const n=document.getElementById('nc-nombre').value.trim();
+  if(!n){ toast('⚠️ Ingresá el nombre','#e67e22'); return; }
+  const clis=getCli();
+  clis.push({
+    id:Date.now(), nombre:n,
+    direccion:document.getElementById('nc-dir').value.trim(),
+    km:parseFloat(document.getElementById('nc-km').value)||0,
+    notas:document.getElementById('nc-notas').value.trim(),
+    viajes:0,
+  });
+  setCli(clis);
+  closeModal('modalNuevoCli');
+  renderClientes();
+  toast('✅ Cliente guardado');
+}
+
+function eliminarCli(id){
+  if(!confirm('¿Eliminar cliente?')) return;
+  setCli(getCli().filter(c=>c.id!==id));
+  renderClientes();
+  toast('🗑 Cliente eliminado','#e74c3c');
+}
+
+function openCliModal(){
+  const clis=getCli();
+  const el=document.getElementById('modalCliList');
+  if(!clis.length){ el.innerHTML='<div class="empty">Sin clientes guardados.</div>'; }
+  else {
+    el.innerHTML=clis.sort((a,b)=>(b.viajes||0)-(a.viajes||0)).map(c=>`
+      <div class="cli-item" onclick="usarCliente('${esc(c.nombre)}','${esc(c.direccion||'')}',${c.km||0});closeModal('modalCli')">
+        <div>
+          <div class="cli-name">${c.nombre}</div>
+          ${c.direccion?`<div class="cli-dir">📍 ${c.direccion}</div>`:''}
+          <div class="cli-viajes">${c.viajes||0} viajes${c.km?' · '+c.km+' km aprox':''}</div>
+        </div>
+        <div style="font-size:20px;color:var(--muted);">›</div>
+      </div>`).join('');
+  }
+  openModal('modalCli');
+}
+
+function usarCliente(nombre, dir, km){
+  goTo('nuevo', document.querySelectorAll('.nav-item')[0]);
+  document.getElementById('f-cliente').value=nombre;
+  document.getElementById('f-direccion').value=dir;
+  if(km){ document.getElementById('f-km').value=km; calc(); }
+  closeModal('modalCli');
+}
+
+// ============================================================
+// NAV / TABS
+// ============================================================
+function goTo(t, el){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  document.getElementById('screen-'+t).classList.add('active');
+  if(el) el.classList.add('active');
+  if(t==='hoy') renderHoy();
+  if(t==='clientes') renderClientes();
+  if(t==='historial'){ subTab('semana'); }
+  if(t==='config') loadCfgUI();
+}
+
+// ============================================================
+// NAVEGACIÓN
+// ============================================================
+let navDestino='';
+function abrirNav(destino){
+  if(!destino||!destino.trim()){ toast('⚠️ Ingresá una dirección primero','#e67e22'); return; }
+  navDestino=destino.trim();
+  document.getElementById('navDestLabel').textContent='📍 '+navDestino;
+  openModal('modalNav');
+}
+function irAMapa(app){
+  const dest=encodeURIComponent(navDestino);
+  if(app==='gmaps'){
+    // Google Maps con origen actual y destino
+    window.open('https://www.google.com/maps/dir/?api=1&destination='+dest+'&travelmode=driving','_blank');
+  } else {
+    // Waze con destino
+    window.open('https://waze.com/ul?q='+dest+'&navigate=yes','_blank');
+  }
+  closeModal('modalNav');
+}
+
+// ============================================================
+// MODALS
+// ============================================================
+function openModal(id){ document.getElementById(id).classList.add('open'); }
+function closeModal(id){ document.getElementById(id).classList.remove('open'); }
+document.querySelectorAll('.modal-bg').forEach(m=>m.addEventListener('click',function(e){ if(e.target===this) this.classList.remove('open'); }));
+
+// ============================================================
+// TOAST
+// ============================================================
+function toast(msg,color){
+  const t=document.getElementById('toastEl');
+  t.textContent=msg;
+  t.style.background=color||'var(--green)';
+  t.style.color=color?'#fff':'#000';
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2500);
+}
+</script>
+</body>
+</html>
